@@ -11,8 +11,6 @@ def sort_based_index(array, column=0):
 
 # brute force approach to find distance between closest pair points
 def dis_using_direct_method(points, n, min_dis=float("inf")):
-
-
     for i in range(n - 1):
         for j in range(i + 1, n):
             current_dis = dist(points[i], points[j])
@@ -21,7 +19,7 @@ def dis_using_direct_method(points, n, min_dis=float("inf")):
     return min_dis
 
 # closest pair of points in strip
-def dis_between_closest_in_strip(points, n, min_dis=float("inf")):
+def strip_closest(points, n, min_dis=float("inf")):
     for i in range(min(6, n - 1), n):
         for j in range(max(0, i - 6), i):
             current_dis = dist(points[i], points[j])
@@ -31,38 +29,34 @@ def dis_between_closest_in_strip(points, n, min_dis=float("inf")):
     return min_dis
 
 
-def closest_util(points_sorted_on_x, points_sorted_on_y, n):
+def closest_util(s_on_x, s_on_y, n):
     # base case
     if n <= 3:
-        return dis_using_direct_method(points_sorted_on_x, n)
+        return dis_using_direct_method(s_on_x, n)
 
     # recursion
     mid = n // 2
-    dl = closest_util(
-        points_sorted_on_x, points_sorted_on_y[:mid], mid
-    )
-    dr = closest_util(
-        points_sorted_on_y, points_sorted_on_y[mid:], n - mid
-    )
+    dl = closest_util( s_on_x, s_on_y[:mid], mid)
+    dr = closest_util( s_on_y, s_on_y[mid:], n - mid)
     d = min(dl, dr)
 
-    cross_strip = []
-    for point in points_sorted_on_x:
-        if abs(point[0] - points_sorted_on_x[mid][0]) < d:
-            cross_strip.append(point)
+    strip = []
+    for point in s_on_x:
+        if abs(point[0] - s_on_x[mid][0]) < d:
+            strip.append(point)
 
-    d_strip = dis_between_closest_in_strip(
-        cross_strip, len(cross_strip), d
+    d_strip = strip_closest(
+        strip, len(strip), d
     )
     return min(d, d_strip)
 
 
 def dis_using_divide_conquer(points, n):
-    points_sorted_on_x = sort_based_index(points, column=0)
-    points_sorted_on_y = sort_based_index(points, column=1)
+    s_on_x = sort_based_index(points, column=0)
+    s_on_y = sort_based_index(points, column=1)
     return (
         closest_util(
-            points_sorted_on_x, points_sorted_on_y, n
+            s_on_x, s_on_y, n
         )
     ) ** 0.5
 
@@ -96,8 +90,8 @@ def readPointArray():
 
     return points
 
-# n = 100
-# generateRandomPointsAndSaveIt(n)
+n = 1000
+generateRandomPointsAndSaveIt(n)
 
 points = readPointArray()
 n = len(points) 

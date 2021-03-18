@@ -38,28 +38,23 @@ def closest_util(points_sorted_on_x, points_sorted_on_y, n):
 
     # recursion
     mid = n // 2
-    closest_in_left = closest_util(
+    dl = closest_util(
         points_sorted_on_x, points_sorted_on_y[:mid], mid
     )
-    closest_in_right = closest_util(
+    dr = closest_util(
         points_sorted_on_y, points_sorted_on_y[mid:], n - mid
     )
-    closest_pair_dis = min(closest_in_left, closest_in_right)
-
-    """
-    cross_strip contains the points, whose Xcoords are at a
-    distance(< closest_pair_dis) from mid's Xcoord
-    """
+    d = min(dl, dr)
 
     cross_strip = []
     for point in points_sorted_on_x:
-        if abs(point[0] - points_sorted_on_x[mid][0]) < closest_pair_dis:
+        if abs(point[0] - points_sorted_on_x[mid][0]) < d:
             cross_strip.append(point)
 
-    closest_in_strip = dis_between_closest_in_strip(
-        cross_strip, len(cross_strip), closest_pair_dis
+    d_strip = dis_between_closest_in_strip(
+        cross_strip, len(cross_strip), d
     )
-    return min(closest_pair_dis, closest_in_strip)
+    return min(d, d_strip)
 
 
 def dis_using_divide_conquer(points, n):

@@ -1,6 +1,8 @@
 import math 
 import copy
 
+from random import randrange
+
 # A class to represent a Point in 2D plane 
 class Point(): 
 	def __init__(self, x, y): 
@@ -18,14 +20,17 @@ def dist(p1, p2):
 # A Brute Force method to return the 
 # smallest distance between two points 
 # in P[] of size n 
-def bruteForce(P, n): 
-	min_val = float('inf') 
-	for i in range(n): 
-		for j in range(i + 1, n): 
-			if dist(P[i], P[j]) < min_val: 
-				min_val = dist(P[i], P[j]) 
+# Time complexity: O(n ^ 2)
+def getClosestUsingBruteForce(P): 
+    n = len(P)    
+	
+    min_val = float('inf') 
+    for i in range(n): 
+        for j in range(i + 1, n): 
+            if dist(P[i], P[j]) < min_val: 
+                min_val = dist(P[i], P[j]) 
 
-	return min_val 
+    return min_val 
 
 # A utility function to find the 
 # distance beween the closest points of 
@@ -64,7 +69,7 @@ def closestUtil(P, Q, n):
 	# If there are 2 or 3 points, 
 	# then use brute force 
 	if n <= 3: 
-		return bruteForce(P, n) 
+		return getClosestUsingBruteForce(P) 
 
 	# Find the middle point 
 	mid = n // 2
@@ -96,19 +101,53 @@ def closestUtil(P, Q, n):
 # The main function that finds 
 # the smallest distance. 
 # This method mainly uses closestUtil() 
-def closest(P, n): 
-	P.sort(key = lambda point: point.x) 
-	Q = copy.deepcopy(P) 
-	Q.sort(key = lambda point: point.y)	 
+def getClosestDivideConquer(P):     
+    P.sort(key = lambda point: point.x) 
+    Q = copy.deepcopy(P) 
+    Q.sort(key = lambda point: point.y)	 
 
-	# Use recursive function closestUtil() 
-	# to find the smallest distance 
-	return closestUtil(P, Q, n) 
+    # Use recursive function closestUtil() 
+    # to find the smallest distance 
+    n = len(P)
+    return closestUtil(P, Q, n) 
 
-# Driver code 
-P = [Point(2, 3), Point(12, 30), 
-	Point(40, 50), Point(5, 1), 
-	Point(12, 10), Point(3, 4)] 
-n = len(P) 
-print("The smallest distance is", 
-				closest(P, n)) 
+
+def generateRandomPointsAndSaveIt(n):
+    file = open("Points.txt", "w+") 
+
+    for i in range(n):
+        x = randrange(10 * n)
+        y = randrange(10 * n)
+
+        file.write(str(x) + " " + str(y) + '\n')
+
+    file.close()
+
+def readPointArray():
+    file = open("Points.txt", "r") 
+
+    lines = file.readlines()
+
+    file.close()
+
+    points = []
+    for li in lines:
+       array = li.split(" ")
+       x = int(array[0])
+       y = int(array[1])
+
+       points.append(Point(x, y))
+
+    return points
+
+
+n = 100
+
+generateRandomPointsAndSaveIt(n)
+
+points = readPointArray()
+
+n = len(points) 
+
+print("The smallest distance based on Direct method  is", getClosestUsingBruteForce(points))
+print("The smallest distance based on Divide and Conquer  is", getClosestDivideConquer(points))

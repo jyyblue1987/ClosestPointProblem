@@ -10,19 +10,19 @@ def sort_based_index(array, column=0):
 
 
 # brute force approach to find distance between closest pair points
-def dis_using_direct_method(points, points_counts, min_dis=float("inf")):
+def dis_using_direct_method(points, n, min_dis=float("inf")):
 
 
-    for i in range(points_counts - 1):
-        for j in range(i + 1, points_counts):
+    for i in range(n - 1):
+        for j in range(i + 1, n):
             current_dis = dist(points[i], points[j])
             if current_dis < min_dis:
                 min_dis = current_dis
     return min_dis
 
 # closest pair of points in strip
-def dis_between_closest_in_strip(points, points_counts, min_dis=float("inf")):
-    for i in range(min(6, points_counts - 1), points_counts):
+def dis_between_closest_in_strip(points, n, min_dis=float("inf")):
+    for i in range(min(6, n - 1), n):
         for j in range(max(0, i - 6), i):
             current_dis = dist(points[i], points[j])
             if current_dis < min_dis:
@@ -31,18 +31,18 @@ def dis_between_closest_in_strip(points, points_counts, min_dis=float("inf")):
     return min_dis
 
 
-def closest_pair_of_points_sqr(points_sorted_on_x, points_sorted_on_y, points_counts):
+def closest_util(points_sorted_on_x, points_sorted_on_y, n):
     # base case
-    if points_counts <= 3:
-        return dis_using_direct_method(points_sorted_on_x, points_counts)
+    if n <= 3:
+        return dis_using_direct_method(points_sorted_on_x, n)
 
     # recursion
-    mid = points_counts // 2
-    closest_in_left = closest_pair_of_points_sqr(
+    mid = n // 2
+    closest_in_left = closest_util(
         points_sorted_on_x, points_sorted_on_y[:mid], mid
     )
-    closest_in_right = closest_pair_of_points_sqr(
-        points_sorted_on_y, points_sorted_on_y[mid:], points_counts - mid
+    closest_in_right = closest_util(
+        points_sorted_on_y, points_sorted_on_y[mid:], n - mid
     )
     closest_pair_dis = min(closest_in_left, closest_in_right)
 
@@ -62,12 +62,12 @@ def closest_pair_of_points_sqr(points_sorted_on_x, points_sorted_on_y, points_co
     return min(closest_pair_dis, closest_in_strip)
 
 
-def dis_using_divide_conquer(points, points_counts):
+def dis_using_divide_conquer(points, n):
     points_sorted_on_x = sort_based_index(points, column=0)
     points_sorted_on_y = sort_based_index(points, column=1)
     return (
-        closest_pair_of_points_sqr(
-            points_sorted_on_x, points_sorted_on_y, points_counts
+        closest_util(
+            points_sorted_on_x, points_sorted_on_y, n
         )
     ) ** 0.5
 
